@@ -30,12 +30,17 @@ for n=1:length(liste)
     Y = [Y; classe];
 end
 
-%X = X - mean(X);
-%X = pca(X);
+X = X - mean(X);
+[coeff, score, latent] = pca(X);
+% Analyse this for seeing the overall main features of PCA
+latent;
+X = X * coeff(:, 1:4);
+
+
 %size(X)
 %[coeff,score] = pca(X);
 %X = coeff(:, 1:50) * score(:, 1:50)')';
-%X = score(:, 1:50) * coeff(:, 1:50)';
+%X = score(:, 1:5) * coeff(:, 1:5)';
 %X = score(:, 1:10);
 %size(X)
 
@@ -67,9 +72,7 @@ Ytest = Y(cv.test,1);
 mdl = fitcknn(Xtrain, Ytrain', 'NumNeighbors', 10, 'Standardize',1);
 
 [label, score, cost] = predict(mdl, Xtrain);
-Ytrain
 result = Ytrain == label;
-sum(result)/length(result)
 fprintf("Training accuracy: %f\n", sum(result)/length(result));
 
 

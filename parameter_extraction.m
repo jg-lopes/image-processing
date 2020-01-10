@@ -8,18 +8,23 @@ function parameters = parameter_extraction(image)
     
     % Module of the coeff
     z = abs(coeff);
-    size(z)
+    size(z);
     
     % Region props
-    stats = regionprops(BW, 'all');
+    %stats = regionprops(BW, 'all');
+    stats = regionprops(BW, 'Circularity', 'Eccentricity', 'EulerNumber', 'Extent', 'Solidity'); 
+    
+    %4*pi * surface * perimetre
+    
+    
     %filtered_stats = stats;
     % Difficult to encode data, wouldn't give the scalar values that might
     % be useful for pca
-    filtered_stats = rmfield(stats, {'SubarrayIdx', 'ConvexHull','ConvexImage','ConvexHull','ConvexImage','Image','FilledImage','PixelIdxList','PixelList'});
+    %filtered_stats = rmfield(stats, {'SubarrayIdx', 'ConvexHull','ConvexImage','ConvexHull','ConvexImage','Image','FilledImage','PixelIdxList','PixelList'});
     % Multidimensional data that might be useful for PCA, but would require
     % further dimensional treatment
     %filtered_stats = rmfield(filtered_stats, {'Centroid', 'BoundingBox', 'Extrema', 'MaxFeretCoordinates', 'MinFeretCoordinates'});
-    cell = struct2cell(filtered_stats);
+    cell = struct2cell(stats);
     %cell;
     
     parameters = z';
@@ -31,5 +36,7 @@ function parameters = parameter_extraction(image)
             parameters = [parameters cell{k}(i)];
         end
     end
+    
+    size(parameters);
     
 end
