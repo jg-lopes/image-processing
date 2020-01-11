@@ -10,25 +10,21 @@ function parameters = parameter_extraction(image)
     z = abs(coeff);
     size(z);
     
-    % Region props
-    %stats = regionprops(BW, 'all');
-    stats = regionprops(BW, 'Circularity', 'Eccentricity', 'EulerNumber', 'Extent', 'Solidity'); 
+    % Uncovering other interesting proprieties from the images using
+    % regionprops
     
-    %4*pi * surface * perimetre
+    % First we take proprieties from the image that will be applied
+    % directly to the classification algorithm 
+    direct_props = regionprops(BW, 'Circularity', 'Eccentricity', 'EulerNumber', 'Extent', 'Solidity'); 
+    cell = struct2cell(direct_props);
     
+    % Then, measures which will be indirectly placed in the algorithm
+    indirect_props = regionprops(BW, 'Area', 'Perimeter');
+    surr_per_ratio = 4 * pi * indirect_props.Area / indirect_props.Perimeter^2;
+    cell{end+1} = surr_per_ratio;
     
-    %filtered_stats = stats;
-    % Difficult to encode data, wouldn't give the scalar values that might
-    % be useful for pca
-    %filtered_stats = rmfield(stats, {'SubarrayIdx', 'ConvexHull','ConvexImage','ConvexHull','ConvexImage','Image','FilledImage','PixelIdxList','PixelList'});
-    % Multidimensional data that might be useful for PCA, but would require
-    % further dimensional treatment
-    %filtered_stats = rmfield(filtered_stats, {'Centroid', 'BoundingBox', 'Extrema', 'MaxFeretCoordinates', 'MinFeretCoordinates'});
-    cell = struct2cell(stats);
-    %cell;
     
     parameters = z';
-    %parameters = [];
     for k = 1:length(cell)
         cell{k} = cell{k}(:);
         
